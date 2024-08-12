@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+         <loc>https://scriptblocks.github.io/pydocs/</loc>
+         <lastmod>2024-08-12</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://scriptblocks.github.io/pydocs/vol1/chap1/</loc>
+         <lastmod>2024-08-12</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://scriptblocks.github.io/pydocs/vol1/chap2/</loc>
+         <lastmod>2024-08-12</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://scriptblocks.github.io/pydocs/vol1/chap3/</loc>
+         <lastmod>2024-08-12</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+</urlset>
