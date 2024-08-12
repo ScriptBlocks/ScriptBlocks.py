@@ -1,5 +1,4 @@
 site_name: ScriptBlocks.py
-site_url: https://scriptblocks.github.io/pydocs
 theme:
   name: material
   palette:
@@ -7,9 +6,6 @@ theme:
       primary: indigo
       accent: indigo
   features:
-    - navigation.tabs
-    - navigation.top
-    - navigation.instant
     - content.code.copy
 
 nav:
