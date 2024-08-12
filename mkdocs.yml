@@ -10,8 +10,18 @@ theme:
     - navigation.tabs
     - navigation.top
     - navigation.instant
+    - content.code.copy
 
 nav:
   - Introduction: index.md
   - Volume 1 - Getting Started:
     - Creating your first app: vol1/chap1.md
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
