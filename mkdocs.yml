@@ -1,4 +1,5 @@
 site_name: ScriptBlocks.py
+site_url: https://scriptblocks.github.io/pydocs
 theme:
   name: material
   palette:
