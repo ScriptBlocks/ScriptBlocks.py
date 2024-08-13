@@ -7,7 +7,7 @@ First, open your ScriptBlocks project, if applicable. Then, look at the main pan
 ```py
 import scriptblocks
 
-app = scriptblocks.App({
-
-})
+app = scriptblocks.App()
+app.name = "My first app!"
+app.version = "v1.0.0-alpha.1"
 ```
