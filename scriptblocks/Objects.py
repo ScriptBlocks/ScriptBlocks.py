@@ -8,7 +8,11 @@ class Objects:
   def replaceAll(self, newObjs):
     self.objs = newObjs
 
+  def add(self, obj):
+    self.objs.append(obj)
 
+  def remove(self, obj):
+    self.objs.remove(obj)
 
 '''
 As of writing this sentence, the Objects class is very small, difficult to understand and undocumented. Below is how the Objects class should be used:

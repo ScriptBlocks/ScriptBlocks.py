@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="scriptblocks",
-    version="0.0.0-snapshot.1",
+    version="0.0.0",
     author="OmgRod",
     description="Package used by ScriptBlocks IDE to make apps with Python",
     long_description=open('README.md').read(),

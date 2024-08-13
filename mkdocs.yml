@@ -2,16 +2,52 @@ site_name: ScriptBlocks.py
 theme:
   name: material
   palette:
-    - scheme: dark
-      primary: indigo
-      accent: indigo
+    # Palette toggle for light mode
+    - scheme: default
+      toggle:
+        icon: material/brightness-7 
+        name: Switch to dark mode
+
+    # Palette toggle for dark mode
+    - scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
   features:
     - content.code.copy
+    - navigation.tabs
+    - navigation.top
+    - navigation.footer
+    - search.highlight
+    - search.share
+    - toc.integrate
+    - toc.follow
+    - toc.sticky
+    - navigation.sections
+    - navigation.indexes
+    - navigation.next
+    - navigation.previous
+    - navigation.sidebar
 
 nav:
   - Introduction: index.md
   - Volume 1 - Getting Started:
     - Creating your first app: vol1/chap1.md
+    - Object Management: vol1/chap2.md
+  - Volume 2 - Using the Interface:
+    - The ScriptBlocks Workspace: vol2/chap1.md
+    - The Replit Shell: vol2/chap2.md
+    - Working with Files: vol2/chap3.md
+  - Volume 3 - Building your first app:
+    - Project Setup: vol3/chap1.md
+    - Adding UI Elements: vol3/chap2.md
+    - Adding Logic: vol3/chap3.md
+    - Deploying your app: vol3/chap4.md
+  - Volume 4 - Advanced Topics:
+    - Using the Replit AI assistant: vol4/chap1.md
+    - Debugging your app: vol4/chap2.md
+    - Using Git and Version Control: vol4/chap3.md
+    - Working with Libraries: vol4/chap4.md
 
 markdown_extensions:
   - pymdownx.highlight:
@@ -24,3 +60,17 @@ markdown_extensions:
   - pymdownx.inlinehilite
   - pymdownx.snippets
   - pymdownx.superfences
+  - pymdownx.tabbed
+  - pymdownx.details
+  - pymdownx.emoji
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/OmgRod/scriptblocks.py
+    - icon: fontawesome/brands/discord
+      link: https://discord.gg/scriptblocks
+    - icon: fontawesome/brands/twitter
+      link: https://twitter.com/OmgRod
+    - icon: fontawesome/brands/reddit
+      link: https://www.reddit.com/r/ScriptBlocks/
