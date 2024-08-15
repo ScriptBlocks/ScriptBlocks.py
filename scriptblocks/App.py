@@ -2,49 +2,20 @@ import os
 import sys
 
 class Objects:
-  def __init__(self):
-    self.objs = []
+    def __init__(self):
+        self.objs = []
 
-  def get(self):
-    return self.objs
+    def get(self):
+        return self.objs
 
-  def replaceAll(self, newObjs):
-    self.objs = newObjs
+    def replaceAll(self, newObjs):
+        self.objs = newObjs
 
-  def add(self, obj):
-    self.objs.append(obj)
+    def add(self, obj):
+        self.objs.append(obj)
 
-  def remove(self, obj):
-    self.objs.remove(obj)
-
-'''
-As of writing this sentence, the Objects class is very small, difficult to understand and undocumented. Below is how the Objects class should be used:
-
-Imagine this as an Objects list:
-
-[
-  {
-    "id": "fake-sprite-id-name",
-    "type": "Sprite",
-    "posX": 0,
-    "posY": 0,
-    "width": 0,
-    "height": 0,
-    "rotation": 0,
-    "visible": True,
-    "color": (255, 255, 255),
-    "image": "assets/sprites/sprite.png",
-    "children": [
-      {
-        "id": "example-node",
-        "type": "Node",
-        "posX": 0,
-        "posY": 0
-      }
-    ]
-  }
-]
-'''
+    def remove(self, obj):
+        self.objs.remove(obj)
 
 class App:
     def __init__(self, width=800, height=600, mode="windowed"):
@@ -78,18 +49,28 @@ class App:
     def __render_windows(self):
         import ctypes
         from ctypes import wintypes
+        from PIL import Image
+        from PIL.ImageOps import expand
+        import win32gui
+        import win32con
 
         user32 = ctypes.WinDLL('user32', use_last_error=True)
+        gdi32 = ctypes.WinDLL('gdi32', use_last_error=True)
+        hdc = None
 
         def wnd_proc(hwnd, msg, wparam, lparam):
             if msg == 0x0010:  # WM_CLOSE
                 user32.PostQuitMessage(0)
+            elif msg == 0x000F:  # WM_PAINT
+                hdc = user32.GetDC(hwnd)
+                self.__draw_sprites_windows(hdc)
+                user32.ReleaseDC(hwnd, hdc)
             else:
                 return user32.DefWindowProcW(hwnd, msg, wparam, lparam)
             return 0
 
         WNDPROCTYPE = ctypes.WINFUNCTYPE(ctypes.c_long, ctypes.c_int, ctypes.c_uint, ctypes.c_int, ctypes.c_int)
-        WNDCLASS = ctypes.WINFUNCTYPE(wintypes.HWND, wintypes.HINSTANCE, wintypes.LPCWSTR, WNDPROCTYPE, wintypes.HINSTANCE, wintypes.HWND, wintypes.HBRUSH, wintypes.HCURSOR, wintypes.HICON, wintypes.LPCWSTR, wintypes.LPCWSTR)
+        WNDCLASS = wintypes.WNDCLASS()
         WNDCLASS.lpszClassName = 'MyWindowClass'
         WNDCLASS.lpfnWndProc = WNDPROCTYPE(wnd_proc)
         WNDCLASS.hInstance = user32.GetModuleHandleW(None)
@@ -117,9 +98,24 @@ class App:
             user32.TranslateMessage(ctypes.byref(msg))
             user32.DispatchMessageW(ctypes.byref(msg))
 
+    def __draw_sprites_windows(self, hdc):
+        import ctypes
+        from PIL import Image
+
+        # Iterate over objects and draw the sprites
+        for obj in self.objects.get():
+            if obj["type"] == "Sprite" and obj["visible"]:
+                img = Image.open(obj["image"])
+                img = img.resize((obj["width"], obj["height"]))
+                hdc_mem = ctypes.windll.gdi32.CreateCompatibleDC(hdc)
+                hbitmap = Image.open(obj["image"]).tobitmap()
+                ctypes.windll.gdi32.SelectObject(hdc_mem, hbitmap)
+                ctypes.windll.gdi32.AlphaBlend(hdc, obj["posX"], obj["posY"], obj["width"], obj["height"], hdc_mem, 0, 0, obj["width"], obj["height"], 0)
+                ctypes.windll.gdi32.DeleteObject(hbitmap)
+
     def __render_macos(self):
         import objc
-        from Cocoa import NSApplication, NSWindow, NSWindowStyleMask, NSBackingStoreBuffered, NSRect, NSPoint, NSSize
+        from Cocoa import NSApplication, NSWindow, NSWindowStyleMask, NSBackingStoreBuffered, NSRect, NSPoint, NSSize, NSImage, NSColor, NSView
 
         app = NSApplication.sharedApplication()
 
@@ -142,10 +138,23 @@ class App:
         window.setTitle_(self.name)
         window.makeKeyAndOrderFront_(None)
 
+        # Set up a custom view for rendering sprites
+        class CustomView(NSView):
+            def drawRect_(self, rect):
+                for obj in self.objects.get():
+                    if obj["type"] == "Sprite" and obj["visible"]:
+                        image = NSImage.alloc().initWithContentsOfFile_(obj["image"])
+                        image.drawInRect_(NSRect(NSPoint(obj["posX"], obj["posY"]), NSSize(obj["width"], obj["height"])))
+
+        view = CustomView.alloc().initWithFrame_(rect)
+        window.setContentView_(view)
+
         app.run()
 
     def __render_linux(self):
         from Xlib import X, display
+        from PIL import Image
+        from PIL.ImageOps import expand
 
         d = display.Display()
         root = d.screen().root
@@ -164,9 +173,17 @@ class App:
         while True:
             event = d.next_event()
             if event.type == X.Expose:
-                pass  # Redraw window
+                self.__draw_sprites_linux(window)
             elif event.type == X.DestroyNotify:
                 break  # Window closed
+
+    def __draw_sprites_linux(self, window):
+        # Use Xlib or another library to draw the sprites here
+        # Load and render the sprite images using Xlib or a compatible library
+        for obj in self.objects.get():
+            if obj["type"] == "Sprite" and obj["visible"]:
+                # Implement image drawing on Linux here
+                pass
 
     def getWinSize(self):
         return {"width": self.width, "height": self.height}

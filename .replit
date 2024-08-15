@@ -1,4 +1,4 @@
-entrypoint = "examples/sounds/main.py"
+entrypoint = "examples/basic_app/main.py"
 modules = ["python-3.10"]
 
 [nix]

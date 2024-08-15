@@ -1,5 +1,7 @@
 class Sprite:
   def __init__(self, path):
+    self.id = ""
+    
     self.posX = 0
     self.posY = 0
     self.width = 0
@@ -10,8 +12,6 @@ class Sprite:
     
     self.color = (255, 255, 255)
     self.image = path
-
-    self.type = "Sprite"
 
   def changePos(self, x, y):
     self.posX += x
@@ -26,3 +26,18 @@ class Sprite:
 
   def toggleVisible(self):
     self.visible = not self.visible
+
+  def getRaw(self):
+    return {
+      "id": self.id,
+      "type": "Sprite",
+      "posX": self.posX,
+      "posY": self.posY,
+      "width": self.width,
+      "height": self.height,
+      "rotation": self.rotation,
+      "visible": self.visible,
+      "color": self.color,
+      "image": self.image,
+      "children": []
+    }

@@ -1,4 +1,8 @@
-from scriptblocks import App
+from scriptblocks import App, Sprite
 
 testApp = App()
-testApp.objects.add("test")
+
+testSprite = Sprite("image.png")
+testApp.objects.add(testSprite.getRaw())
+
+testApp.render()

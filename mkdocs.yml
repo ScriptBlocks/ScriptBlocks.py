@@ -43,11 +43,14 @@ nav:
     - Adding UI Elements: vol3/chap2.md
     - Adding Logic: vol3/chap3.md
     - Deploying your app: vol3/chap4.md
-  - Volume 4 - Advanced Topics:
-    - Using the Replit AI assistant: vol4/chap1.md
-    - Debugging your app: vol4/chap2.md
-    - Using Git and Version Control: vol4/chap3.md
-    - Working with Libraries: vol4/chap4.md
+  - Learning Python:
+    - Python for Beginners: vol4/chap1.md
+    - Hello World: vol4/chap2.md
+    - Data Types: vol4/chap3.md
+    - Variables: vol4/chap4.md
+    - Functions: vol4/chap5.md
+    - If Statements: vol4/chap6.md
+    - Loops: vol4/chap7.md
 
 markdown_extensions:
   - pymdownx.highlight:
@@ -67,7 +70,7 @@ markdown_extensions:
 extra:
   social:
     - icon: fontawesome/brands/github
-      link: https://github.com/OmgRod/scriptblocks.py
+      link: https://github.com/ScriptBlocks/scriptblocks.py
     - icon: fontawesome/brands/discord
       link: https://discord.gg/scriptblocks
     - icon: fontawesome/brands/twitter
