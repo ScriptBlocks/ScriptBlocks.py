@@ -2,11 +2,11 @@ class Sprite:
   def __init__(self, path):
     self.id = ""
     
-    self.posX = 0
-    self.posY = 0
-    self.width = 0
-    self.height = 0
-    self.rotation = 0
+    self.posX = 0.0
+    self.posY = 0.0
+    self.width = 0.0
+    self.height = 0.0
+    self.rotation = 0.0
 
     self.visible = True
     

@@ -2,9 +2,9 @@ import ffmpeg
 
 class Sound:
   def __init__(self, path):
-    self.speed = 1
-    self.pitch = 1
-    self.volume = 1
+    self.speed = 1.0
+    self.pitch = 1.0
+    self.volume = 1.0
     self.path = path
 
   def play(self):

@@ -50,13 +50,11 @@ class App:
         import ctypes
         from ctypes import wintypes
         from PIL import Image
-        from PIL.ImageOps import expand
         import win32gui
         import win32con
 
         user32 = ctypes.WinDLL('user32', use_last_error=True)
         gdi32 = ctypes.WinDLL('gdi32', use_last_error=True)
-        hdc = None
 
         def wnd_proc(hwnd, msg, wparam, lparam):
             if msg == 0x0010:  # WM_CLOSE
@@ -115,7 +113,7 @@ class App:
 
     def __render_macos(self):
         import objc
-        from Cocoa import NSApplication, NSWindow, NSWindowStyleMask, NSBackingStoreBuffered, NSRect, NSPoint, NSSize, NSImage, NSColor, NSView
+        from Cocoa import NSApplication, NSWindow, NSWindowStyleMask, NSBackingStoreBuffered, NSRect, NSPoint, NSSize, NSImage, NSView
 
         app = NSApplication.sharedApplication()
 
@@ -154,36 +152,50 @@ class App:
     def __render_linux(self):
         from Xlib import X, display
         from PIL import Image
-        from PIL.ImageOps import expand
 
         d = display.Display()
         root = d.screen().root
 
         window = root.create_window(100, 100, self.width, self.height, 2, d.screen().root_depth)
         window.set_wm_name(self.name)
+        window.set_wm_class(self.name, self.name)
         window.map()
 
         if self.mode == "fullscreen":
             window.configure(width=d.screen().width_in_pixels, height=d.screen().height_in_pixels)
-            window.set_wm_state('_NET_WM_STATE_FULLSCREEN')
+            window.change_property(d.intern_atom('_NET_WM_STATE', False),
+                                   Xatom.ATOM, 32, [d.intern_atom('_NET_WM_STATE_FULLSCREEN', False)])
 
         elif self.mode == "fullscreen_windowed":
             window.configure(width=d.screen().width_in_pixels, height=d.screen().height_in_pixels)
 
+        gc = window.create_gc()
+
         while True:
             event = d.next_event()
             if event.type == X.Expose:
-                self.__draw_sprites_linux(window)
+                self.__draw_sprites_linux(window, gc, d)
             elif event.type == X.DestroyNotify:
                 break  # Window closed
 
-    def __draw_sprites_linux(self, window):
-        # Use Xlib or another library to draw the sprites here
-        # Load and render the sprite images using Xlib or a compatible library
+    def __draw_sprites_linux(self, window, gc, d):
         for obj in self.objects.get():
             if obj["type"] == "Sprite" and obj["visible"]:
-                # Implement image drawing on Linux here
-                pass
+                img = Image.open(obj["image"])
+                img = img.resize((obj["width"], obj["height"]))
+
+                # Convert the image to RGB and then to a format suitable for Xlib
+                img = img.convert('RGB')
+                data = img.tobytes("raw", "RGB")
+
+                # Create an XImage
+                ximage = d.display.screen().root.create_image(self.width, self.height, 24, X.ZPixmap, data)
+
+                # Put the image on the window
+                window.put_image(gc, ximage, 0, 0, obj["posX"], obj["posY"], obj["width"], obj["height"])
+
+                # Clean up
+                ximage.destroy()
 
     def getWinSize(self):
         return {"width": self.width, "height": self.height}
