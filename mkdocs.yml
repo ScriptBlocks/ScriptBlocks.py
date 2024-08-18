@@ -30,16 +30,16 @@ theme:
     - navigation.sidebar
 
 plugins:
-- i18n:
-    docs_structure: suffix
-    languages:
-      - locale: en
-        default: true
-        name: English
-        build: true
-      - locale: fr
-        name: Français
-        build: true
+  - i18n:
+      docs_structure: suffix
+      languages:
+        en:
+          name: English
+          default: true
+          build: true
+        fr:
+          name: Français
+          build: true
 
 nav:
   - Introduction: index.md
