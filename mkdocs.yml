@@ -29,6 +29,18 @@ theme:
     - navigation.previous
     - navigation.sidebar
 
+plugins:
+- i18n:
+    docs_structure: suffix
+    languages:
+      - locale: en
+        default: true
+        name: English
+        build: true
+      - locale: fr
+        name: Français
+        build: true
+
 nav:
   - Introduction: index.md
   - Volume 1 - Getting Started:
