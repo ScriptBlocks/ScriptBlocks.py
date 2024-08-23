@@ -100,16 +100,15 @@ class App:
         import ctypes
         from PIL import Image
 
-        # Iterate over objects and draw the sprites
         for obj in self.objects.get():
             if obj["type"] == "Sprite" and obj["visible"]:
-                img = Image.open(obj["image"])
-                img = img.resize((obj["width"], obj["height"]))
+                img = Image.open(obj["image"]).resize((obj["width"], obj["height"]))
                 hdc_mem = ctypes.windll.gdi32.CreateCompatibleDC(hdc)
-                hbitmap = Image.open(obj["image"]).tobitmap()
+                hbitmap = img.tobitmap()
                 ctypes.windll.gdi32.SelectObject(hdc_mem, hbitmap)
                 ctypes.windll.gdi32.AlphaBlend(hdc, obj["posX"], obj["posY"], obj["width"], obj["height"], hdc_mem, 0, 0, obj["width"], obj["height"], 0)
                 ctypes.windll.gdi32.DeleteObject(hbitmap)
+                ctypes.windll.gdi32.DeleteDC(hdc_mem)
 
     def __render_macos(self):
         import objc
@@ -150,7 +149,7 @@ class App:
         app.run()
 
     def __render_linux(self):
-        from Xlib import X, display
+        from Xlib import X, Xatom, display
         from PIL import Image
 
         d = display.Display()
@@ -181,21 +180,12 @@ class App:
     def __draw_sprites_linux(self, window, gc, d):
         for obj in self.objects.get():
             if obj["type"] == "Sprite" and obj["visible"]:
-                img = Image.open(obj["image"])
-                img = img.resize((obj["width"], obj["height"]))
-
-                # Convert the image to RGB and then to a format suitable for Xlib
-                img = img.convert('RGB')
+                img = Image.open(obj["image"]).resize((obj["width"], obj["height"])).convert('RGB')
                 data = img.tobytes("raw", "RGB")
 
-                # Create an XImage
-                ximage = d.display.screen().root.create_image(self.width, self.height, 24, X.ZPixmap, data)
+                ximage = window.create_image(d.screen().root_depth, X.ZPixmap, 0, data, obj["width"], obj["height"], 32, 0)
 
-                # Put the image on the window
                 window.put_image(gc, ximage, 0, 0, obj["posX"], obj["posY"], obj["width"], obj["height"])
-
-                # Clean up
-                ximage.destroy()
 
     def getWinSize(self):
         return {"width": self.width, "height": self.height}

@@ -29,40 +29,28 @@ theme:
     - navigation.previous
     - navigation.sidebar
 
-plugins:
-  - i18n:
-      docs_structure: suffix
-      languages:
-        en:
-          name: English
-          default: true
-          build: true
-        fr:
-          name: Français
-          build: true
-
 nav:
-  - Introduction: index.md
+  - Introduction: index.en.md
   - Volume 1 - Getting Started:
-    - Creating your first app: vol1/chap1.md
-    - Object Management: vol1/chap2.md
+    - Creating your first app: vol1/chap1.en.md
+    - Object Management: vol1/chap2.en.md
   - Volume 2 - Using the Interface:
-    - The ScriptBlocks Workspace: vol2/chap1.md
-    - The Replit Shell: vol2/chap2.md
-    - Working with Files: vol2/chap3.md
+    - The ScriptBlocks Workspace: vol2/chap1.en.md
+    - The Replit Shell: vol2/chap2.en.md
+    - Working with Files: vol2/chap3.en.md
   - Volume 3 - Building your first app:
-    - Project Setup: vol3/chap1.md
-    - Adding UI Elements: vol3/chap2.md
-    - Adding Logic: vol3/chap3.md
-    - Deploying your app: vol3/chap4.md
+    - Project Setup: vol3/chap1.en.md
+    - Adding UI Elements: vol3/chap2.en.md
+    - Adding Logic: vol3/chap3.en.md
+    - Deploying your app: vol3/chap4.en.md
   - Learning Python:
-    - Python for Beginners: vol4/chap1.md
-    - Hello World: vol4/chap2.md
-    - Data Types: vol4/chap3.md
-    - Variables: vol4/chap4.md
-    - Functions: vol4/chap5.md
-    - If Statements: vol4/chap6.md
-    - Loops: vol4/chap7.md
+    - Python for Beginners: vol4/chap1.en.md
+    - Hello World: vol4/chap2.en.md
+    - Data Types: vol4/chap3.en.md
+    - Variables: vol4/chap4.en.md
+    - Functions: vol4/chap5.en.md
+    - If Statements: vol4/chap6.en.md
+    - Loops: vol4/chap7.en.md
 
 markdown_extensions:
   - pymdownx.highlight:

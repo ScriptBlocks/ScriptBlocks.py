@@ -10,7 +10,7 @@ import scriptblocks
 app = scriptblocks.App()
 app.name = "Ma première application !"
 app.version = "v1.0.0-alpha.1"
-app.author = "OmgRod"
+app.developer = "OmgRod"
 
 app.render()
 ```

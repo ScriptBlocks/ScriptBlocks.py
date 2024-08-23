@@ -3,3 +3,4 @@ from .App import App
 from .Sound import Sound
 from .Node import Node
 from .Scene import Scene
+from .Transition import Transition
