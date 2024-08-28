@@ -1,6 +1,6 @@
 from scriptblocks import App, Sprite
 
-testApp = App()
+testApp = App(width=800, height=600, mode="windowed")
 
 testSprite = Sprite("image.png")
 testSprite.width = testApp.width * 0.2

@@ -1,5 +1,6 @@
 # This is a test script - this isn't part of ScriptBlocks.py
 
 import scriptblocks
+import asyncio
 
-app = scriptblocks.Sound("sound.mp3")
+sound = scriptblocks.Sound("sound.mp3").play_sync()

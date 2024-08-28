@@ -54,6 +54,7 @@ class App:
         import win32con
 
         user32 = ctypes.WinDLL('user32', use_last_error=True)
+        kernel32 = ctypes.WinDLL('kernel32', use_last_error=True)
         gdi32 = ctypes.WinDLL('gdi32', use_last_error=True)
 
         def wnd_proc(hwnd, msg, wparam, lparam):
@@ -68,12 +69,36 @@ class App:
             return 0
 
         WNDPROCTYPE = ctypes.WINFUNCTYPE(ctypes.c_long, ctypes.c_int, ctypes.c_uint, ctypes.c_int, ctypes.c_int)
-        WNDCLASS = wintypes.WNDCLASS()
-        WNDCLASS.lpszClassName = 'MyWindowClass'
-        WNDCLASS.lpfnWndProc = WNDPROCTYPE(wnd_proc)
-        WNDCLASS.hInstance = user32.GetModuleHandleW(None)
 
-        if not user32.RegisterClassW(ctypes.byref(WNDCLASS)):
+        HCURSOR = ctypes.c_void_p
+        HICON = ctypes.c_void_p
+        HBRUSH = ctypes.c_void_p
+        LPCWSTR = ctypes.c_wchar_p
+        HINSTANCE = ctypes.c_void_p
+
+        class WNDCLASS(ctypes.Structure):
+            _fields_ = [
+                ("style", ctypes.c_uint),
+                ("lpfnWndProc", WNDPROCTYPE),
+                ("cbClsExtra", ctypes.c_int),
+                ("cbWndExtra", ctypes.c_int),
+                ("hInstance", HINSTANCE),
+                ("hIcon", HICON),
+                ("hCursor", HCURSOR),
+                ("hbrBackground", HBRUSH),
+                ("lpszMenuName", LPCWSTR),
+                ("lpszClassName", LPCWSTR),
+            ]
+
+        WNDCLASS_instance = WNDCLASS()
+        WNDCLASS_instance.lpszClassName = 'MyWindowClass'
+        WNDCLASS_instance.lpfnWndProc = WNDPROCTYPE(wnd_proc)
+        WNDCLASS_instance.hInstance = kernel32.GetModuleHandleW(None)
+        WNDCLASS_instance.hCursor = user32.LoadCursorW(None, win32con.IDC_ARROW)
+        WNDCLASS_instance.hbrBackground = win32con.COLOR_WINDOW + 1
+
+        if not user32.RegisterClassW(ctypes.byref(WNDCLASS_instance)):
+            print(f"Error during RegisterClassW: {ctypes.get_last_error()}")
             raise ctypes.WinError(ctypes.get_last_error())
 
         style = 0xcf0000  # WS_OVERLAPPEDWINDOW
@@ -84,8 +109,23 @@ class App:
             style = 0xcf0000  # WS_OVERLAPPEDWINDOW
             self.width, self.height = user32.GetSystemMetrics(0), user32.GetSystemMetrics(1)
 
-        hwnd = user32.CreateWindowExW(0, WNDCLASS.lpszClassName, self.name, style, 100, 100, self.width, self.height, None, None, WNDCLASS.hInstance, None)
+        hwnd = user32.CreateWindowExW(
+            0,
+            WNDCLASS_instance.lpszClassName,
+            self.name,
+            style,
+            100,
+            100,
+            self.width,
+            self.height,
+            None,
+            None,
+            WNDCLASS_instance.hInstance,
+            None
+        )
+
         if not hwnd:
+            print(f"Error during CreateWindowExW: {ctypes.get_last_error()}")
             raise ctypes.WinError(ctypes.get_last_error())
 
         user32.ShowWindow(hwnd, 1)
