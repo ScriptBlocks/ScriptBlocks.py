@@ -17,7 +17,7 @@ setup(
     python_requires='>=3.6',
     entry_points={
         'console_scripts': [
-            'scriptblocks=scriptblocks.cli.main:main',  # Update with the actual module and function names
+            'scriptblocks=scriptblocks.cli:main',
         ],
     },
 )

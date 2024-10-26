@@ -17,6 +17,7 @@ mkdocs = {extras = ["i18n"], version = "^1.6.0"}
 asyncio = "^3.4.3"
 pydub = "^0.25.1"
 simpleaudio = "^1.0.4"
+argparse = "^1.4.0"
 
 [tool.pyright]
 # https://github.com/microsoft/pyright/blob/main/docs/configuration.md
