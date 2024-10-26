@@ -33,12 +33,12 @@ class App:
         self.width = width
         self.height = height
         self.mode = mode.lower()
-        self.os_name = os.name
+        self.__os_name = os.name
 
     def render(self):
-        if self.os_name == "nt":  # Windows
+        if self.__os_name == "nt":  # Windows
             self.__render_windows()
-        elif self.os_name == "posix":
+        elif self.__os_name == "posix":
             if sys.platform == "darwin":  # macOS
                 self.__render_macos()
             else:  # Linux and other Unix-like systems
@@ -70,24 +70,18 @@ class App:
 
         WNDPROCTYPE = ctypes.WINFUNCTYPE(ctypes.c_long, ctypes.c_int, ctypes.c_uint, ctypes.c_int, ctypes.c_int)
 
-        HCURSOR = ctypes.c_void_p
-        HICON = ctypes.c_void_p
-        HBRUSH = ctypes.c_void_p
-        LPCWSTR = ctypes.c_wchar_p
-        HINSTANCE = ctypes.c_void_p
-
         class WNDCLASS(ctypes.Structure):
             _fields_ = [
                 ("style", ctypes.c_uint),
                 ("lpfnWndProc", WNDPROCTYPE),
                 ("cbClsExtra", ctypes.c_int),
                 ("cbWndExtra", ctypes.c_int),
-                ("hInstance", HINSTANCE),
-                ("hIcon", HICON),
-                ("hCursor", HCURSOR),
-                ("hbrBackground", HBRUSH),
-                ("lpszMenuName", LPCWSTR),
-                ("lpszClassName", LPCWSTR),
+                ("hInstance", ctypes.c_void_p),
+                ("hIcon", ctypes.c_void_p),
+                ("hCursor", ctypes.c_void_p),
+                ("hbrBackground", ctypes.c_void_p),
+                ("lpszMenuName", ctypes.c_wchar_p),
+                ("lpszClassName", ctypes.c_wchar_p),
             ]
 
         WNDCLASS_instance = WNDCLASS()
@@ -98,8 +92,10 @@ class App:
         WNDCLASS_instance.hbrBackground = win32con.COLOR_WINDOW + 1
 
         if not user32.RegisterClassW(ctypes.byref(WNDCLASS_instance)):
-            print(f"Error during RegisterClassW: {ctypes.get_last_error()}")
-            raise ctypes.WinError(ctypes.get_last_error())
+            error_code = ctypes.get_last_error()
+            if error_code != 0:
+                print(f"Error during RegisterClassW: {error_code}")
+                raise ctypes.WinError(error_code)
 
         style = 0xcf0000  # WS_OVERLAPPEDWINDOW
         if self.mode == "fullscreen":
@@ -125,8 +121,12 @@ class App:
         )
 
         if not hwnd:
-            print(f"Error during CreateWindowExW: {ctypes.get_last_error()}")
-            raise ctypes.WinError(ctypes.get_last_error())
+            error_code = ctypes.get_last_error()
+            if error_code != 0:
+                print(f"Error during CreateWindowExW: {error_code}")
+                raise ctypes.WinError(error_code)
+
+        print(f"Window created successfully with handle: {hwnd}")
 
         user32.ShowWindow(hwnd, 1)
         user32.UpdateWindow(hwnd)
@@ -135,6 +135,10 @@ class App:
         while user32.GetMessageW(ctypes.byref(msg), None, 0, 0) > 0:
             user32.TranslateMessage(ctypes.byref(msg))
             user32.DispatchMessageW(ctypes.byref(msg))
+
+        print("Exiting message loop")
+
+        print("Exiting message loop")
 
     def __draw_sprites_windows(self, hdc):
         import ctypes

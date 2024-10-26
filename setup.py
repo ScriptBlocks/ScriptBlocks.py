@@ -7,7 +7,7 @@ setup(
     description="Package used by ScriptBlocks IDE to make apps with Python",
     long_description=open('README.md').read(),
     long_description_content_type="text/markdown",
-    url="https://github.com/OmgRod/scriptblocks.py",
+    url="https://github.com/ScriptBlocks/ScriptBlocks.py",
     packages=find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",
@@ -15,4 +15,9 @@ setup(
         "Operating System :: OS Independent",
     ],
     python_requires='>=3.6',
+    entry_points={
+        'console_scripts': [
+            'scriptblocks=scriptblocks.cli.main:main',  # Update with the actual module and function names
+        ],
+    },
 )

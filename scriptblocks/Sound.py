@@ -1,58 +1,49 @@
+import simpleaudio as sa
+from pydub import AudioSegment
+import io
+import wave
 import asyncio
-from ffmpeg import FFmpeg as SyncFFmpeg
-from ffmpeg.asyncio import FFmpeg as AsyncFFmpeg
 
 class Sound:
     def __init__(self, path):
         self.path = path
-        self.speed = 1.0
-        self.pitch = 1.0
-        self.volume = 1.0
 
-    def _generate_atempo_filters(self, tempo):
-        atempo_filters = []
-        if tempo < 0.5:
-            while tempo < 0.5:
-                atempo_filters.append("atempo=0.5")
-                tempo *= 2.0
-        elif tempo > 2.0:
-            while tempo > 2.0:
-                atempo_filters.append("atempo=2.0")
-                tempo /= 2.0
-        if 0.5 <= tempo <= 2.0:
-            atempo_filters.append(f"atempo={tempo}")
-        return ', '.join(atempo_filters)
-
-    def _get_audio_params(self):
-        tempo = self.speed * self.pitch
-        atempo_filter_str = self._generate_atempo_filters(tempo)
-        return {
-            "format": "wav",
-            "ar": "44100",
-            "ac": "2",
-            "af": f"{atempo_filter_str}, volume={self.volume}"
-        }
+    def _convert_to_wav(self):
+        # Load the audio file and convert to WAV format using pydub
+        audio = AudioSegment.from_file(self.path)
+        wav_data = io.BytesIO()
+        audio.export(wav_data, format="wav")
+        wav_data.seek(0)
+        return wav_data
 
     def play_sync(self):
         try:
-            ffmpeg = SyncFFmpeg()
-            ffmpeg.input(self.path)
-            ffmpeg.output(
-                "pipe:", 
-                **self._get_audio_params()
-            ).execute()  # Synchronous execution
+            # Convert to WAV
+            wav_data = self._convert_to_wav()
+
+            # Read the WAV data into a wave.Wave_read object
+            with wave.open(wav_data, 'rb') as wav_file:
+                wave_obj = sa.WaveObject.from_wave_read(wav_file)
+                play_obj = wave_obj.play()
+                play_obj.wait_done()  # Block until the sound is done playing
+
         except Exception as e:
-            print(f"FFmpeg error: {e}")
+            print(f"Error during playback: {e}")
 
     async def play_async(self):
         try:
-            ffmpeg = AsyncFFmpeg()
-            ffmpeg.input(self.path)
-            ffmpeg.output(
-                "pipe:",
-                **self._get_audio_params()
-            )
-            await ffmpeg.execute()  # Asynchronous execution
-        except Exception as e:
-            print(f"FFmpeg error: {e}")
+            # Convert to WAV
+            wav_data = self._convert_to_wav()
 
+            # Play asynchronously using an executor
+            loop = asyncio.get_event_loop()
+            await loop.run_in_executor(None, self._play_wav_async, wav_data)
+
+        except Exception as e:
+            print(f"Error during playback: {e}")
+
+    def _play_wav_async(self, wav_data):
+        with wave.open(wav_data, 'rb') as wav_file:
+            wave_obj = sa.WaveObject.from_wave_read(wav_file)
+            play_obj = wave_obj.play()
+            play_obj.wait_done()  # Block until the sound is done playing
