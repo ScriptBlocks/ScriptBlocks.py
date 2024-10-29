@@ -1,7 +1,7 @@
 import argparse
 import os
 import re
-import subprocess
+from git import Repo, GitCommandError
 
 # Define available templates with branch names and descriptions
 TEMPLATES = [
@@ -68,12 +68,19 @@ def create():
         repo_url = "https://github.com/ScriptBlocks/templates"
         try:
             print(f"Cloning the '{selected_branch}' template from GitHub...")
-            subprocess.run(["git", "clone", "--branch", selected_branch, repo_url, project_dir], check=True)
+            Repo.clone_from(repo_url, project_dir, branch=selected_branch)
             print(f"Project cloned into {project_dir}")
-        except subprocess.CalledProcessError as e:
+        except GitCommandError as e:
             print(f"Error cloning the repository: {e}")
     else:
-        print("No template selected. Skipping template setup.")
+        # Clone the default example project template if no template is selected
+        example_repo_url = "https://github.com/ScriptBlocks/example-project"
+        try:
+            print("No template selected. Cloning the example project template...")
+            Repo.clone_from(example_repo_url, project_dir)
+            print(f"Example project cloned into {project_dir}")
+        except GitCommandError as e:
+            print(f"Error cloning the example project repository: {e}")
 
 def main():
     parser = argparse.ArgumentParser(prog="scriptblocks", description="ScriptBlocks CLI")
